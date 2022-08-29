@@ -1,0 +1,156 @@
+package tictactoe;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        char[][] ticTac = new char[3][3];
+
+        for (int i = 0; i < ticTac.length; i++) {
+            for (int j = 0; j < ticTac[i].length; j++) {
+                ticTac[i][j] = '_';
+                if (i == 0 && j == 0) {
+                    System.out.println("---------");
+                }
+                if (j == 0) {
+                    System.out.print("| " + ticTac[i][j] + " ");
+                } else if (j == 2) {
+                    System.out.print(ticTac[i][j] + " " + "|");
+                } else {
+                    System.out.print(ticTac[i][j] + " ");
+                }
+                if (i == 2 && j == 2) {
+                    System.out.println();
+                    System.out.println("---------");
+                }
+            }
+            System.out.println();
+        }
+
+
+        ticy:
+
+        for (int q = 1; q < 10; q++) {
+
+
+            int x = scanner.nextInt();
+            int y = scanner.nextInt();
+            boolean occup = true;
+            int countX = 0;
+            int countO = 0;
+            boolean xWin = false;
+            boolean yWin = false;
+            boolean iDraw = false;
+            boolean iMpos = false;
+
+
+            do {
+                if (x <= 0 || x > 3 || y <= 0 || y > 3) {
+                System.out.println("Coordinates should be from 1 to 3!");
+                do {
+                    x = scanner.nextInt();
+                    y = scanner.nextInt();
+                    if (x <= 0 || x > 3 || y <= 0 || y > 3) {
+                        System.out.println("Coordinates should be from 1 to 3!");
+                    }
+                } while (x <= 0 || x > 3 || y <= 0 || y > 3);
+            }
+                for (int i = 0; i < ticTac.length; i++) {
+                    for (int j = 0; j < ticTac[i].length; j++) {
+                        if ((i == x - 1 && j == y - 1) && (ticTac[i][j] == 'X' || ticTac[i][j] == 'O')) {
+                            occup = false;
+                            System.out.println("This cell is occupied! Choose another one!");
+                            do {
+                                x = scanner.nextInt();
+                                y = scanner.nextInt();
+
+                            } while ((i == x - 1 && j == y - 1) && (ticTac[i][j] == 'X' || ticTac[i][j] == 'O'));
+                        }
+                        if (i == x - 1 && j == y - 1 && ticTac[i][j] == '_') {
+                            occup = true;
+                        }
+                    }
+                }
+            } while (!occup);
+
+
+            for (int i = 0; i < ticTac.length; i++) {
+                for (int j = 0; j < ticTac[i].length; j++) {
+                    if (i == x - 1 && j == y - 1 && q % 2 != 0) {
+                        ticTac[i][j] = 'X';
+                    } else if (i == x - 1 && j == y - 1 && q % 2 == 0) {
+                        ticTac[i][j] = 'O';
+                    }
+                    if (i == 0 && j == 0) {
+                        System.out.println("---------");
+                    }
+                    if (j == 0) {
+                        System.out.print("| " + ticTac[i][j] + " ");
+                    } else if (j == 2) {
+                        System.out.print(ticTac[i][j] + " " + "|");
+                    } else {
+                        System.out.print(ticTac[i][j] + " ");
+                    }
+                    if (i == 2 && j == 2) {
+                        System.out.println();
+                        System.out.println("---------");
+                    }
+                }
+                System.out.println();
+            }
+
+
+
+            for (int i = 0; i < ticTac.length; i++) {
+                for (int j = 0; j < ticTac[i].length; j++) {
+                    if (ticTac[i][j] == 'X') {
+                        countX++;
+                    }
+                    if (ticTac[i][j] == 'O') {
+                        countO++;
+                    }
+                }
+            }
+
+
+            for (int i = 0; i < ticTac.length; i++) {
+                for (int j = 0; j < ticTac[i].length; j++) {
+                    if (ticTac[i][0] == 'X' && ticTac[i][1] == 'X' && ticTac[i][2] == 'X' ||
+                            ticTac[0][j] == 'X' && ticTac[1][j] == 'X' && ticTac[2][j] == 'X' ||
+                            ticTac[0][0] == 'X' && ticTac[1][1] == 'X' && ticTac[2][2] == 'X' ||
+                            ticTac[0][2] == 'X' && ticTac[1][1] == 'X' && ticTac[2][0] == 'X') {
+                        xWin = true;
+                    }
+                    if (ticTac[i][0] == 'O' && ticTac[i][1] == 'O' && ticTac[i][2] == 'O' ||
+                            ticTac[0][j] == 'O' && ticTac[1][j] == 'O' && ticTac[2][j] == 'O' ||
+                            ticTac[0][0] == 'O' && ticTac[1][1] == 'O' && ticTac[2][2] == 'O' ||
+                            ticTac[0][2] == 'O' && ticTac[1][1] == 'O' && ticTac[2][0] == 'O') {
+                        yWin = true;
+                    }
+                }
+            }
+
+
+            if ((countX == 5 && countO == 4 || countX == 4 && countO == 5) && (!xWin && !yWin)) {
+                iDraw = true;
+                System.out.println("Draw");
+
+            }
+            if (!xWin && !yWin && !iDraw && !iMpos) {
+                System.out.println("Game not finished");
+            }
+
+            if (xWin && yWin) {
+                System.out.println("Impossible");
+                break ticy;
+            } else if (xWin) {
+                System.out.println("X wins");
+                break ticy;
+            } else if (yWin) {
+                System.out.println("O wins");
+                break ticy;
+            }
+        }
+    }
+}
