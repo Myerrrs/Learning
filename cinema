@@ -1,0 +1,201 @@
+package cinema;
+
+import java.util.Scanner;
+
+public class Cinema {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter the number of rows:");
+        int row1 = scanner.nextInt();
+        System.out.println("Enter the number of seats in each row:");
+        int column1 = scanner.nextInt();
+        char[][] cinema = showArray(row1, column1);
+        chooseMenu(row1, column1, cinema);
+    }
+    public static void chooseMenu(int row1, int column1, char[][] cinema) {
+        System.out.printf("%n1. Show the seats%n2. Buy a ticket%n3. Statistics%n0. Exit%n");
+        Scanner scanner = new Scanner(System.in);
+        int point = scanner.nextInt();
+        switch (point) {
+            case 1:
+                showTickets(row1, column1, cinema);
+                chooseMenu(row1, column1, cinema);
+                break;
+            case 2:
+                choseNum(row1, column1, cinema);
+                chooseMenu(row1, column1, cinema);
+                break;
+            case 3:
+                statistics(row1, column1, cinema);
+                chooseMenu(row1, column1, cinema);
+                break;
+            case 0:
+                break;
+            default:
+                System.out.println("Error, please try a valid point of the menu!");
+                chooseMenu(row1, column1, cinema);
+        }
+    }
+
+    public static char[][] showArray(int row1, int column1) {
+        char[][] cinema = new char[row1 + 1][column1 + 1];
+        char column = '0';
+        char row = '0';
+        for (int i = 0; i <= row1; i++, row++) {
+            for (int j = 0; j <= column1; j++, column++) {
+                if (i == 0 && j == 0) {
+                    cinema[i][j] = ' ';
+                }
+                if (i == 0 && j != 0) {
+                    cinema[i][j] = column;
+                }
+                if (i != 0 && j == 0) {
+                    cinema[i][j] = row;
+                }
+                if (i != 0 && j != 0) {
+                    cinema[i][j] = 'S';
+                }
+            }
+        }
+        return cinema;
+    }
+    public static void showTickets(int row1, int column1, char[][] cinema) {
+
+        System.out.printf("%nCinema:%n");
+
+        for (int i = 0; i <= row1; i++) {
+            for (int j = 0; j <= column1; j++) {
+                System.out.print(cinema[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+    public static int priceTic(int x, int y, int row1, int column1) {
+        int qua;
+        int conPrice = 0;
+
+        int[][] cinemaPrice = new int[row1][column1];
+        for (int i = 0; i < row1; i++) {
+            for (int j = 0; j < column1; j++) {
+                qua = row1 * column1;
+                if (qua < 60) {
+                    cinemaPrice[i][j] = 10;
+                } else {
+                    if (column1 % 2 == 0 && i <= column1 / 2) {
+                        cinemaPrice[i][j] = 10;
+                    } else if (column1 % 2 != 0 && i < column1 / 2) {
+                        cinemaPrice[i][j] = 10;
+                    } else {
+                        cinemaPrice[i][j] = 8;
+                    }
+                }
+                if (i == x - 1 && j == y - 1) {
+                    conPrice = cinemaPrice[i][j];
+                }
+            }
+        }
+        return conPrice;
+    }
+
+    public static void choseNum(int row1, int column1, char[][] cinema) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.printf("%nEnter a row number:%n");
+        int x = scanner.nextInt();
+        System.out.printf("%nEnter a seat number in that row:%n");
+        int y = scanner.nextInt();
+        if (x < 0 || y < 0 || x > row1 || y > column1) {
+            do {
+                System.out.printf("%nWrong input!%n");
+                System.out.printf("%nEnter a row number:%n");
+                x = scanner.nextInt();
+                System.out.printf("%nEnter a seat number in that row:%n");
+                y = scanner.nextInt();
+            } while (x < 0 || y < 0 || x > row1 || y > column1);
+        }
+        if (cinema[x][y] == 'B') {
+            do {
+                System.out.printf("%nThat ticket has already been purchased!%n");
+                System.out.printf("%nEnter a row number:%n");
+                x = scanner.nextInt();
+                System.out.printf("%nEnter a seat number in that row:%n");
+                y = scanner.nextInt();
+            } while (cinema[x][y] == 'B');
+        }
+        System.out.printf("%nTicket price: $%d%n", priceTic(x, y, row1, column1));
+        cinema[x][y] = 'B';
+    }
+
+    public static void statistics(int row1, int column1, char[][] cinema) {
+        int numberOf = numberOfTickets (row1, column1, cinema);
+        double percentage = (double) numberOf / ((double) row1 * (double) column1) * 100;
+        char proCent = '%';
+        int curInc = currentIncome (row1, column1, cinema);
+        int totalInc = totalIncome (row1, column1);
+        System.out.printf("%nNumber of purchased tickets: %d", numberOf);
+        System.out.printf("%nPercentage: %.2f%c", percentage, proCent);
+        System.out.printf("%nCurrent income: $%d", curInc);
+        System.out.printf("%nTotal income: $%d%n", totalInc);
+    }
+
+    public static int numberOfTickets (int row1, int column1, char[][] cinema) {
+        int qua = 0;
+        for (int i = 0; i <= row1; i++) {
+            for (int j = 0 ; j <= column1; j++) {
+                if (cinema[i][j] == 'B') {
+                    qua = qua + 1;
+                }
+            }
+        }
+        return qua;
+    }
+
+    public static int currentIncome (int row1, int column1, char[][] cinema) {
+        int qua;
+        int curInc = 0;
+        for (int i = 0; i <= row1; i++) {
+            for (int j = 0 ; j <= column1; j++) {
+                qua = row1 * column1;
+                if (cinema[i][j] == 'B' && qua < 60) {
+                    curInc = curInc + 10;
+                } else {
+                    if (row1 % 2 == 0 && i <= row1 / 2 && cinema[i][j] == 'B') {
+                        curInc = curInc + 10;
+                    } else if (row1 % 2 == 0 && i > row1 / 2 && cinema[i][j] == 'B') {
+                        curInc = curInc + 8;
+                    } else if (row1 % 2 != 0 && i <= row1 / 2 && cinema[i][j] == 'B') {
+                        curInc = curInc + 10;
+                    } else if (row1 % 2 != 0 && i > row1 / 2 && cinema[i][j] == 'B'){
+                        curInc = curInc + 8;
+                    }
+                }
+            }
+        }
+        return curInc;
+    }
+
+    public static int totalIncome (int row1, int column1) {
+        int qua;
+        int curInc = 0;
+        for (int i = 0; i < row1; i++) {
+            for (int j = 0 ; j < column1; j++) {
+                qua = row1 * column1;
+                if (qua < 60) {
+                    curInc = curInc + 10;
+                } else {
+                    if (row1 % 2 == 0 && i + 1 <= row1 / 2) {
+                        curInc = curInc + 10;
+                    } else if (row1 % 2 == 0 && i + 1 > row1 / 2) {
+                        curInc = curInc + 8;
+                    } else if (row1 % 2 != 0 && i + 1 <= row1 / 2) {
+                        curInc = curInc + 10;
+                    } else if (row1 % 2 != 0 && i + 1 > row1 / 2) {
+                        curInc = curInc + 8;
+                    }
+                }
+            }
+        }
+        return curInc;
+    }
+}
